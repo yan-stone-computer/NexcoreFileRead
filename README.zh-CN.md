@@ -1,6 +1,6 @@
 <div align="center">
 
-# ⚡ TianShu2Markdown · 天枢文档
+# ⚡ TianShu2Markdown
 
 ### 把任何文件，变成干净的 Markdown —— 本地、私密、即刻完成
 
@@ -34,6 +34,59 @@
 
 ---
 
+
+## 🚀 快速开始
+
+> 两条路任选：**下载 exe 直接玩**，或**从源码跑**（不下载 exe 也完全能用）。
+
+### 方式一：下载 exe（推荐 · 零门槛）
+
+1. 前往本仓库的 **Releases** 页面：[yan-stone-computer/tianshu2markdown/releases](https://github.com/yan-stone-computer/tianshu2markdown/releases)
+2. 下载 **`TianShu2Markdown.exe`**（约 121 MB）
+3. 双击运行 → 浏览器自动打开 → 拖入文件 → 完成 ✨
+
+> 无需 Python、无需联网、无需安装任何东西 —— 单文件即用，内置 OCR 引擎，绿色免安装。
+
+### 方式二：从源码运行（无需下载 exe）
+
+> 想先看看效果、不想下载大文件？从源码跑，功能完全一致。
+
+**前置要求**：安装 [Python 3.10+](https://www.python.org/downloads/)（勾选 "Add to PATH"）
+
+```bash
+# 1. 克隆仓库
+git clone https://github.com/yan-stone-computer/tianshu2markdown
+cd tianshu2markdown
+
+# 2. 安装依赖
+pip install -r requirements.txt
+
+# 3. 启动服务（推荐用启动器，自动打开浏览器）
+python launcher.py
+
+# —— 或者手动启动 ——
+# uvicorn app:app --host 127.0.0.1 --port 8765
+# 然后浏览器打开 http://127.0.0.1:8765
+```
+
+### 试用样例
+
+仓库自带 `samples/` 目录，含公式 PDF、带图 DOCX / PPTX / XLSX、HTML、图片等 8 种样例文件，两种方式启动后都可以直接拖入测试。
+
+### （可选）从源码构建 exe
+
+开发者想自己打包可执行文件：
+
+```bash
+pip install pyinstaller
+pyinstaller --onefile --console --name TianShu2Markdown \
+  --add-data "index.html;." --add-data "LICENSE;." \
+  --collect-all uvicorn --collect-all fastapi --collect-all markitdown \
+  --collect-data magika --collect-all onnxruntime --collect-all rapidocr_onnxruntime \
+  main.py
+# 产物在 dist/TianShu2Markdown.exe
+```
+
 ## 🚀 天枢一转，万物成文
 
 大多数转换工具，都在**悄悄毁掉你的文档**：
@@ -55,6 +108,8 @@
 **修复后 —— TianShu2Markdown**：公式完整可读。
 
 ```markdown
+
+
 ## 第 1 页
 ln(Sit) = α0 + β1 ln(Pit) + γ1 · Weekday + δ1 · Trend + ε
 
@@ -91,31 +146,6 @@ Qit ≥2.5 kg,  Ii,0,  Pit ≥1
 | CSV / JSON / XML / TXT | ✅ | — | — | — |
 | EPUB / ZIP | ✅ | — | — | — |
 | 音频（元数据） | ✅ | — | — | — |
-
----
-
-## 🚀 快速开始
-
-### 方式一：桌面版（零门槛）
-
-Windows：双击 **`TianShu2Markdown.exe`** → 浏览器自动打开 → 拖入文件 → 完成。
-
-> 单文件约 121 MB，内置 OCR 引擎与模型，离线可用，绿色免安装。
-
-### 方式二：源码运行
-
-```bash
-git clone https://github.com/yan-stone-computer/tianshu2markdown
-cd tianshu2markdown
-pip install -r requirements.txt
-
-uvicorn app:app --host 127.0.0.1 --port 8765
-# 浏览器打开 http://127.0.0.1:8765
-```
-
-### 试用样例
-
-仓库自带 `samples/` 目录，含公式 PDF、带图 DOCX / PPTX / XLSX、HTML、图片等 8 种样例文件，开箱即测。
 
 ---
 

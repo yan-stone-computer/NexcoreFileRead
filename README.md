@@ -1,6 +1,6 @@
 <div align="center">
 
-# ⚡ TianShu2Markdown · 天枢文档
+# ⚡ TianShu2Markdown
 
 ### Turn **anything** into clean Markdown — locally, privately, instantly.
 
@@ -34,6 +34,59 @@ This project is a deep second-development of Microsoft's open-source project **M
 
 ---
 
+
+## 🚀 Quick Start
+
+> Two paths: **download the exe and play**, or **run from source** (works perfectly without the exe).
+
+### Option A: Download the exe (recommended · zero setup)
+
+1. Go to the **Releases** page: [yan-stone-computer/tianshu2markdown/releases](https://github.com/yan-stone-computer/tianshu2markdown/releases)
+2. Download **`TianShu2Markdown.exe`** (~121 MB)
+3. Double-click to run → browser opens automatically → drag & drop your file → done ✨
+
+> No Python, no internet, no installation — a single portable file with the OCR engine built in.
+
+### Option B: Run from source (no exe needed)
+
+> Want to try it first without downloading a big file? Running from source gives you exactly the same features.
+
+**Prerequisite**: install [Python 3.10+](https://www.python.org/downloads/) (check "Add to PATH")
+
+```bash
+# 1. Clone the repo
+git clone https://github.com/yan-stone-computer/tianshu2markdown
+cd tianshu2markdown
+
+# 2. Install dependencies
+pip install -r requirements.txt
+
+# 3. Start the service (launcher opens the browser automatically)
+python launcher.py
+
+# ---- or start manually ----
+# uvicorn app:app --host 127.0.0.1 --port 8765
+# then open http://127.0.0.1:8765
+```
+
+### Try the samples
+
+The repo ships a `samples/` folder with 8 sample files (formula PDF, DOCX/PPTX/XLSX with images, HTML, photos, etc.) — drag them in right after starting.
+
+### (Optional) Build the exe from source
+
+For developers who want to package the executable themselves:
+
+```bash
+pip install pyinstaller
+pyinstaller --onefile --console --name TianShu2Markdown \
+  --add-data "index.html;." --add-data "LICENSE;." \
+  --collect-all uvicorn --collect-all fastapi --collect-all markitdown \
+  --collect-data magika --collect-all onnxruntime --collect-all rapidocr_onnxruntime \
+  main.py
+# output: dist/TianShu2Markdown.exe
+```
+
 ## 🚀 天枢一转，万物成文
 
 Most converters **quietly destroy your documents**:
@@ -55,6 +108,8 @@ Most converters **quietly destroy your documents**:
 **After — TianShu2Markdown**：公式完整可读。
 
 ```markdown
+
+
 ## 第 1 页
 ln(Sit) = α0 + β1 ln(Pit) + γ1 · Weekday + δ1 · Trend + ε
 
@@ -91,31 +146,6 @@ Qit ≥2.5 kg,  Ii,0,  Pit ≥1
 | CSV / JSON / XML / TXT | ✅ | — | — | — |
 | EPUB / ZIP | ✅ | — | — | — |
 | 音频（元数据） | ✅ | — | — | — |
-
----
-
-## 🚀 快速开始
-
-### 方式一：桌面版（零门槛）
-
-Windows：双击 **`TianShu2Markdown.exe`** → 浏览器自动打开 → 拖入文件 → 完成。
-
-> 单文件约 121 MB，内置 OCR 引擎与模型，离线可用，绿色免安装。
-
-### 方式二：源码运行
-
-```bash
-git clone https://github.com/yan-stone-computer/tianshu2markdown
-cd tianshu2markdown
-pip install -r requirements.txt
-
-uvicorn app:app --host 127.0.0.1 --port 8765
-# 浏览器打开 http://127.0.0.1:8765
-```
-
-### 试用样例
-
-仓库自带 `samples/` 目录，含公式 PDF、带图 DOCX / PPTX / XLSX、HTML、图片等 8 种样例文件，开箱即测。
 
 ---
 
