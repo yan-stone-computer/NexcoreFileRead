@@ -1,6 +1,6 @@
 <div align="center">
 
-# ⚡ TianShu2Markdown · 天枢文档
+# ⚡ TianShu2Markdown 
 
 ### Turn **anything** into clean Markdown — locally, privately, instantly.
 
