@@ -119,19 +119,36 @@ uvicorn app:app --host 127.0.0.1 --port 8765
 
 ---
 
+
+## 📁 项目结构
+
+| 路径 | 用途 |
+|---|---|
+| ⭐ `dist/TianShu2Markdown.exe` | **桌面版可执行文件**，双击即用（发布时上传到 GitHub Releases） |
+| `app.py` | 服务主入口：API 路由与转换调度（基于 MarkItDown 二次开发） |
+| `pdfx.py` | 自研 PDF 增强引擎：公式 / 图片 / 链接完整保留（PyMuPDF） |
+| `ocr.py` | 离线 OCR 模块：扫描件 / 照片中英文识别（RapidOCR） |
+| `officex.py` | Office 内嵌图片提取：docx / pptx / xlsx（zip 结构） |
+| `index.html` | 前端页面：精致浅色 Web UI |
+| `main.py` | exe 打包入口（PyInstaller） |
+| `launcher.py` | 源码启动器：`python launcher.py` |
+| `requirements.txt` | Python 依赖清单 |
+| `samples/` | 8 种格式测试样例，开箱即测 |
+| `LICENSE` | 微软 MarkItDown 原版 MIT 协议（未改动） |
+| `icons/` | SVG 矢量图标库（Remix Icon） |
+| `ICON_PROMPT.md` | 应用图标 AI 生图提示词 |
+
 ## 🧱 技术架构
 
-```
-┌────────────┐    ┌──────────────────────────────────────────┐
-│  你的文件    │ →  │  TianShu2Markdown 引擎                          │
-│  PDF/DOCX  │    │  • PyMuPDF    → 公式 / 图片 / 链接完整保留   │
-│  PPTX/XLSX │    │  • markitdown → 文字与表格                  │
-│  图片       │    │  • RapidOCR   → 扫描件 / 照片文字（中英文）  │
-│  HTML/CSV  │    │  • Office zip → 提取内嵌图片                │
-└────────────┘    └───────────────────┬──────────────────────┘
-                                      ↓
-                              干净的 Markdown
-                    （图片以 base64 data URI 内嵌）
+```mermaid
+flowchart LR
+    A["你的文件<br/>PDF / DOCX / PPTX / XLSX / 图片 / HTML / CSV"]
+    A --> B["TianShu2Markdown 引擎"]
+    B --> C["PyMuPDF<br/>公式 / 图片 / 链接完整保留"]
+    B --> D["markitdown<br/>文字与表格"]
+    B --> E["RapidOCR<br/>扫描件 / 照片（中英文）"]
+    B --> F["Office zip<br/>提取内嵌图片"]
+    C & D & E & F --> G["干净的 Markdown<br/>（图片以 base64 内嵌）"]
 ```
 
 - **公式**：PyMuPDF 提取，Unicode 数学符号原样保留

@@ -119,19 +119,36 @@ uvicorn app:app --host 127.0.0.1 --port 8765
 
 ---
 
+
+## 📁 Project Structure
+
+| Path | Purpose |
+|---|---|
+| ⭐ `dist/TianShu2Markdown.exe` | **Desktop executable** — double-click to run (publish to GitHub Releases) |
+| `app.py` | Main service entry: API routes & conversion dispatch (built on MarkItDown) |
+| `pdfx.py` | Custom PDF engine: formulas / images / links preserved (PyMuPDF) |
+| `ocr.py` | Offline OCR: scanned files / photos, zh/en (RapidOCR) |
+| `officex.py` | Office embedded-image extraction: docx / pptx / xlsx (zip) |
+| `index.html` | Frontend: elegant light-theme Web UI |
+| `main.py` | Executable entry (PyInstaller) |
+| `launcher.py` | Source launcher: `python launcher.py` |
+| `requirements.txt` | Python dependencies |
+| `samples/` | 8 sample files for testing |
+| `LICENSE` | Original MIT license from Microsoft MarkItDown (unmodified) |
+| `icons/` | SVG icon library (Remix Icon) |
+| `ICON_PROMPT.md` | AI image-generation prompts for the app icon |
+
 ## 🧱 技术架构
 
-```
-┌────────────┐    ┌──────────────────────────────────────────┐
-│  你的文件    │ →  │  TianShu2Markdown 引擎                          │
-│  PDF/DOCX  │    │  • PyMuPDF    → 公式 / 图片 / 链接完整保留   │
-│  PPTX/XLSX │    │  • markitdown → 文字与表格                  │
-│  图片       │    │  • RapidOCR   → 扫描件 / 照片文字（中英文）  │
-│  HTML/CSV  │    │  • Office zip → 提取内嵌图片                │
-└────────────┘    └───────────────────┬──────────────────────┘
-                                      ↓
-                              干净的 Markdown
-                    （图片以 base64 data URI 内嵌）
+```mermaid
+flowchart LR
+    A["Your file<br/>PDF / DOCX / PPTX / XLSX / Image / HTML / CSV"]
+    A --> B["TianShu2Markdown Engine"]
+    B --> C["PyMuPDF<br/>formulas / images / links intact"]
+    B --> D["markitdown<br/>text & tables"]
+    B --> E["RapidOCR<br/>scanned files / photos (zh/en)"]
+    B --> F["Office zip<br/>embedded images"]
+    C & D & E & F --> G["Clean Markdown<br/>(images embedded as base64)"]
 ```
 
 - **公式**：PyMuPDF 提取，Unicode 数学符号原样保留
