@@ -1,0 +1,8 @@
+# OmniMark 核心依赖
+markitdown[pptx,docx,xlsx,xls,pdf,outlook]
+fastapi
+uvicorn[standard]
+python-multipart
+rapidocr-onnxruntime
+pymupdf
+Pillow
