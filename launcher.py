@@ -1,4 +1,4 @@
-"""TianShu2Markdown 启动器
+"""NexcoreFileRead 启动器
 
 功能：检测端口占用 -> 启动 uvicorn -> 自动打开浏览器
 用法：python launcher.py   （start.bat 调用本文件）
@@ -21,7 +21,7 @@ def is_port_busy() -> bool:
 
 def main() -> None:
     print("=" * 46)
-    print("  TianShu2Markdown · 天枢文档")
+    print("  NexcoreFileRead · NexcoreFileRead")
     print("=" * 46)
 
     if is_port_busy():

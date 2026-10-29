@@ -1,4 +1,4 @@
-"""TianShuMark · 天枢文档 —— OCR 识别模块（RapidOCR + PyMuPDF）
+"""NexcoreFileRead · NexcoreFileRead —— OCR 识别模块（RapidOCR + PyMuPDF）
 
 - ocr_image_bytes: 直接识别图片中的文字
 - ocr_pdf_bytes: 将扫描 PDF 逐页渲染为图片后识别

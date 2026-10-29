@@ -1,4 +1,4 @@
-"""TianShuMark · 天枢文档 —— Office 内嵌图片提取模块
+"""NexcoreFileRead · NexcoreFileRead —— Office 内嵌图片提取模块
 
 docx / pptx / xlsx 均为 zip 结构，直接读取 word/media、ppt/media、xl/media
 目录下的图片文件，以 Markdown 图片（base64 data URI）形式内嵌，图片不丢失。

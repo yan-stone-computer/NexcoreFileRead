@@ -1,4 +1,4 @@
-"""TianShuMark · 天枢文档 —— PDF 增强转换引擎（PyMuPDF 实现）
+"""NexcoreFileRead · NexcoreFileRead —— PDF 增强转换引擎（PyMuPDF 实现）
 
 相比 markitdown 默认的 pdfminer 转换，本引擎：
 1. 文本提取保留公式原貌（Unicode 数学符号完整，不再被拆成表格碎片）

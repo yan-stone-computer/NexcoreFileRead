@@ -1,215 +1,124 @@
-<div align="center">
+# NexcoreFileRead
 
-# ⚡ TianShu2Markdown
+> NexcoreWork 的本地文档读取层：把 PDF、Office、图片、HTML 与数据文件转换成结构化
+> Markdown，保留公式、图片和链接；扫描件在本机 OCR。文件不上传云端。
 
-### Turn **anything** into clean Markdown — locally, privately, instantly.
+这个仓库由原来的 TianShu2Markdown 演进而来。它保留原项目历史和 MIT 许可，重点不再是
+一个独立转换网页，而是成为 NexcoreWork 智能体可调用的文件读取基础设施。
 
-**公式不碎 · 图片不丢 · 链接不丢 · 扫描件也能读**
+## 组合方案
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Python](https://img.shields.io/badge/python-3.10%2B-orange)
-![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)
-![Build](https://img.shields.io/badge/build-single%20exe-orange)
-![OCRed](https://img.shields.io/badge/OCR-Offline%20%7C%20zh%2Ben-green)
+NexcoreWork 采用两条路径，并按可用性组合：
 
-**⭐ If you love it, star it! ⭐**
+```text
+Word / Excel / PowerPoint / HTML / CSV / JSON
+  └─ 浏览器零依赖解析：ZIP + XML + DOMParser
 
-</div>
+PDF / 扫描件 / 公式 / 内嵌图片 / 复杂 Office
+  └─ NexcoreFileRead 本地服务
+       ├─ PyMuPDF：文本、版面、图片、链接
+       ├─ RapidOCR：扫描 PDF 与图片离线识别
+       ├─ MarkItDown：Office / HTML / 数据格式分派
+       └─ Office ZIP：内嵌图片提取
 
----
+智能体只接收有长度上限的 Markdown 文本，原文件留在本机。
+```
 
-## 📜 Attribution & Open Source Notice
+前端零依赖路径保证基础功能在服务未启动时仍可用；NexcoreFileRead 提供更高保真度的
+PDF、公式、图片和 OCR 路径。服务不可达时，NexcoreWork 会明确回退并继续处理，不会让
+一份无法解析的扫描件静默变成空文本。
 
-This project is a deep second-development of Microsoft's open-source project **MarkItDown**
+## 快速启动
 
-- Original repository: https://github.com/microsoft/markitdown
-- License: MIT (the full original LICENSE is preserved at the repository root, unmodified)
-
-### Refactoring scope
-1. Fully rewritten low-level PDF parsing pipeline (PyMuPDF engine: formulas / images / links preserved intact);
-2. Rebuilt architecture: offline OCR (RapidOCR, zh/en), Office embedded-image extraction, Web service orchestration;
-3. Added self-developed features: base64 image embedding, auto-OCR for scanned files, format detection;
-4. Only MarkItDown's core conversion API and a few generic utilities are reused; core conversion logic is independently refactored by the TianShu Series team.
-
-
----
-
-
-## 🚀 Quick Start
-
-> Two paths: **download the exe and play**, or **run from source** (works perfectly without the exe).
-
-### Option A: Download the exe (recommended · zero setup)
-
-1. Go to the **Releases** page: [yan-stone-computer/tianshu2markdown/releases](https://github.com/yan-stone-computer/tianshu2markdown/releases)
-2. Download **`TianShu2Markdown.exe`** (~121 MB)
-3. Double-click to run → browser opens automatically → drag & drop your file → done ✨
-
-> No Python, no internet, no installation — a single portable file with the OCR engine built in.
-
-### Option B: Run from source (no exe needed)
-
-> Want to try it first without downloading a big file? Running from source gives you exactly the same features.
-
-**Prerequisite**: install [Python 3.10+](https://www.python.org/downloads/) (check "Add to PATH")
+要求 Python 3.10+。
 
 ```bash
-# 1. Clone the repo
-git clone https://github.com/yan-stone-computer/tianshu2markdown
-cd tianshu2markdown
-
-# 2. Install dependencies
-pip install -r requirements.txt
-
-# 3. Start the service (launcher opens the browser automatically)
+git clone https://github.com/yan-stone-computer/NexcoreFileRead.git
+cd NexcoreFileRead
+python -m pip install -r requirements.txt
 python launcher.py
-
-# ---- or start manually ----
-# uvicorn app:app --host 127.0.0.1 --port 8765
-# then open http://127.0.0.1:8765
 ```
 
-### Try the samples
+默认只监听 `127.0.0.1:8765`。
 
-The repo ships a `samples/` folder with 8 sample files (formula PDF, DOCX/PPTX/XLSX with images, HTML, photos, etc.) — drag them in right after starting.
+## HTTP API
 
-### (Optional) Build the exe from source
+### 健康检查
 
-For developers who want to package the executable themselves:
-
-```bash
-pip install pyinstaller
-pyinstaller --onefile --console --name TianShu2Markdown \
-  --add-data "index.html;." --add-data "LICENSE;." \
-  --collect-all uvicorn --collect-all fastapi --collect-all markitdown \
-  --collect-data magika --collect-all onnxruntime --collect-all rapidocr_onnxruntime \
-  main.py
-# output: dist/TianShu2Markdown.exe
+```http
+GET /api/health
 ```
 
-## 🚀 天枢一转，万物成文
+### 转换文件
 
-Most converters **quietly destroy your documents**:
+```http
+POST /api/convert
+Content-Type: multipart/form-data
 
-| 能力 | 其他转换工具 | **TianShu2Markdown** |
-|---|---|---|
-| 🧮 公式 | ❌ 被拆成表格碎片，下标全乱 | ✅ **完整保留** `ln(Sit) = α0 + β1 ln(Pit)` |
-| 🖼️ 图片 | ❌ 静默丢失 | ✅ 自动提取，base64 内嵌 |
-| 🔗 链接 | ❌ 被丢弃 | ✅ 转为标准 Markdown 链接 |
-| 📄 扫描版 PDF | ❌ 一片空白 | ✅ **离线 OCR**（中英文） |
-| 🖼️ 照片/截图 | ❌ 什么都读不出 | ✅ OCR 文字 + 内嵌原图 |
-| 🧾 Word / PPT / Excel | ⚠️ 仅文字 | ✅ 文字 + 内嵌图片 |
-| 🔒 隐私 | ⚠️ 文件上传云端 | ✅ **纯本地转换，文件不出本机** |
-
-### 真实效果对比（同一份公式文档）
-
-**Before** — 传统引擎：公式碎成表格，`∑` 符号丢失，下标孤立成行。
-
-**After — TianShu2Markdown**：公式完整可读。
-
-```markdown
-
-
-## 第 1 页
-ln(Sit) = α0 + β1 ln(Pit) + γ1 · Weekday + δ1 · Trend + ε
-
-## 第 2 页
-max ∑ i [Pit · Dit(Pit) −Cit · Qit −λiIit]
-2 ≤ ∑ i yi ≤3,  yi ∈{0, 1}
-Qit ≥2.5 kg,  Ii,0,  Pit ≥1
+file=<document>
 ```
 
----
+响应：
 
-## ✨ 为什么是 TianShu2Markdown？
+```json
+{
+  "filename": "report.pdf",
+  "markdown": "## 第 1 页\n\n...",
+  "ocr": false,
+  "engine": "pymupdf"
+}
+```
 
-- 🧮 **公式完整** — 自研 PyMuPDF 引擎，Unicode 数学符号原样保留，告别"公式变表格碎片"
-- 🖼️ **图片不丢** — PDF 页内图片、Word/PPT/Excel 内嵌图片全部自动提取并内嵌
-- 🔗 **链接保留** — 文档超链接转成 `[文字](网址)`
-- 📄 **扫描件 OCR** — 内置中英文识别模型，**完全离线**，隐私安全
-- 🚀 **单文件 exe** — 双击即用，无需安装 Python，绿色便携
-- 🔒 **纯本地** — 没有服务器，没有上传，机密文档不离开你的电脑
+字段说明：
 
----
+- `markdown`：交给下游智能体的结构化文本；
+- `ocr`：是否走过扫描件或图片 OCR；
+- `engine`：本次使用的解析路径；
+- `warnings`：可选，说明降级、跳过或无法保真的内容。
 
-## 🗂️ 支持的格式
+## NexcoreWork 集成
 
-| 格式 | 文字 | 图片 | 链接 | OCR |
+NexcoreWork 的本地服务把前端 multipart 文件转发到：
+
+```text
+NEXCORE_FILE_READ_URL=http://127.0.0.1:8765
+```
+
+只接受回环地址。返回的 Markdown 会像普通上传文档一样进入本机文件表，随后由上下文预算
+决定注入量；原始文件不会进入模型上下文。
+
+## 支持的格式
+
+| 格式 | 文本 | 图片 | 链接 | 扫描件 OCR |
 |---|---:|---:|---:|---:|
-| PDF（文本型） | ✅ | ✅ | ✅ | — |
-| PDF（扫描件） | ✅ | ✅ | — | ✅ |
-| Word `.docx` | ✅ | ✅ | — | — |
-| PowerPoint `.pptx` | ✅ | ✅ | — | — |
-| Excel `.xlsx` | ✅ | ✅ | — | — |
-| 图片（png / jpg / …） | — | ✅ | — | ✅ |
-| HTML | ✅ | — | ✅ | — |
-| CSV / JSON / XML / TXT | ✅ | — | — | — |
-| EPUB / ZIP | ✅ | — | — | — |
-| 音频（元数据） | ✅ | — | — | — |
+| PDF | 是 | 是 | 是 | 是 |
+| DOCX / PPTX / XLSX | 是 | 是 | 视格式 | 图片可单独识别 |
+| 图片 | OCR 文本 | 原图内嵌 | 不适用 | 是 |
+| HTML | 是 | 视输入 | 是 | 不适用 |
+| CSV / JSON / TXT | 是 | 不适用 | 保留原文 | 不适用 |
 
----
+## 设计边界
 
+- 本服务不是数据库，不保存长期状态；每次请求独立处理。
+- 文档内容视为不可信数据，不执行其中的脚本、宏或嵌入对象。
+- 公式保留依赖 PDF 文本层；纯图片公式只能走 OCR，可能损失上下标精度。
+- Office 内嵌图片会按体积和长边压缩后以 data URI 内嵌。
+- 加密 PDF、受密码保护的 Office 文件不会绕过保护。
+- OCR 可能出错，响应会明确标记，不把识别结果说成原文。
 
-## 📁 Project Structure
+## 与 NexcoreWork 中其他模块的关系
 
-| Path | Purpose |
-|---|---|
-| ⭐ `dist/TianShu2Markdown.exe` | **Desktop executable** — double-click to run (publish to GitHub Releases) |
-| `app.py` | Main service entry: API routes & conversion dispatch (built on MarkItDown) |
-| `pdfx.py` | Custom PDF engine: formulas / images / links preserved (PyMuPDF) |
-| `ocr.py` | Offline OCR: scanned files / photos, zh/en (RapidOCR) |
-| `officex.py` | Office embedded-image extraction: docx / pptx / xlsx (zip) |
-| `index.html` | Frontend: elegant light-theme Web UI |
-| `main.py` | Executable entry (PyInstaller) |
-| `launcher.py` | Source launcher: `python launcher.py` |
-| `requirements.txt` | Python dependencies |
-| `samples/` | 8 sample files for testing |
-| `LICENSE` | Original MIT license from Microsoft MarkItDown (unmodified) |
-| `icons/` | SVG icon library (Remix Icon) |
-| `ICON_PROMPT.md` | AI image-generation prompts for the app icon |
+- 上下文治理：[nexcore-context-governor](https://github.com/yan-stone-computer/nexcore-context-governor)
+- 视觉证据：[NexcoreVision](https://github.com/yan-stone-computer/NexcoreVision)
+- 完整本地工作台：[NexcoreWork 产品站](https://github.com/yan-stone-computer/nexcorework-site)
 
-## 🧱 技术架构
+## 来源、许可与上游
 
-```mermaid
-flowchart LR
-    A["Your file<br/>PDF / DOCX / PPTX / XLSX / Image / HTML / CSV"]
-    A --> B["TianShu2Markdown Engine"]
-    B --> C["PyMuPDF<br/>formulas / images / links intact"]
-    B --> D["markitdown<br/>text & tables"]
-    B --> E["RapidOCR<br/>scanned files / photos (zh/en)"]
-    B --> F["Office zip<br/>embedded images"]
-    C & D & E & F --> G["Clean Markdown<br/>(images embedded as base64)"]
-```
+- 仓库自身：MIT，见 [LICENSE](LICENSE)。
+- 上游基础：Microsoft MarkItDown（MIT），只复用其转换 API 与少量通用工具。
+- PDF 增强：PyMuPDF。
+- 离线 OCR：RapidOCR + ONNX Runtime。
+- Office 图片提取与 NexcoreWork 集成代码由团队实现。
 
-- **公式**：PyMuPDF 提取，Unicode 数学符号原样保留
-- **图片**：PDF 页内 + Office media 目录提取，base64 内嵌（超大图自动压缩）
-- **链接**：PDF 超链接转 Markdown 链接
-- **OCR**：RapidOCR + PyMuPDF 渲染，中英文模型内置，离线可用
-
----
-
-## 🗺️ Roadmap
-
-- [ ] LaTeX 公式识别（Pix2Text 接入）
-- [ ] 批量 / 文件夹转换
-- [ ] 导出 `.zip`（Markdown + 图片资源）
-- [ ] 暗色主题 & 多语言
-- [ ] macOS / Linux 版本
-
----
-
-## 🤝 参与贡献
-
-Issues、功能建议、PR 全部欢迎！也欢迎到 `samples/` 补充更多测试文件。
-
-**如果这个工具帮到了你，请点个 ⭐ Star 支持一下～**
-
----
-
-## 📄 License
-
-[MIT](./LICENSE) — 个人与商业使用均免费。
-
----
-
-<div align="center"><sub>Made with ❤️ · 天枢序列 · TianShu Series</sub></div>
+原 TianShu2Markdown README 中关于 MarkItDown 二次开发的归属说明继续适用。仓库更名为
+NexcoreFileRead 不改变第三方资源原有许可与版权。

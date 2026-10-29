@@ -1,4 +1,4 @@
-"""TianShu2Markdown 可执行文件入口（PyInstaller 打包用）
+"""NexcoreFileRead 可执行文件入口（PyInstaller 打包用）
 
 双击 exe -> 自动打开浏览器 -> 启动本地转换服务
 按 Ctrl+C 或关闭窗口停止服务
@@ -28,7 +28,7 @@ def open_browser() -> None:
 
 if __name__ == "__main__":
     print("=" * 46)
-    print("  TianShu2Markdown · 天枢文档")
+    print("  NexcoreFileRead · NexcoreFileRead")
     print("=" * 46)
 
     if is_port_busy():

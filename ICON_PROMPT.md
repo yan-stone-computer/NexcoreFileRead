@@ -1,4 +1,4 @@
-# TianShu2Markdown · 应用图标生图提示词
+# NexcoreFileRead · 应用图标生图提示词
 
 > 天枢（TianShu）= 北斗七星之首，本工具是"把任何文件转成 Markdown"的本地转换器。  
 > 图标要求：现代、无文字、方形（1024×1024）、蓝青渐变（不要紫色）。
@@ -63,5 +63,5 @@ high-end tech aesthetic.
 生成后把图片发我（或给我文件路径），我会帮你：
 
 1. 裁成方形 → 转多尺寸 `.ico`（16~256px，供 exe 使用）
-2. 替换 `web/icon.ico` / `icon.png`，重打包 TianShu2Markdown.exe
+2. 替换 `web/icon.ico` / `icon.png`，重打包 NexcoreFileRead.exe
 3. 顺手更新 README 里的 logo（如需要）
