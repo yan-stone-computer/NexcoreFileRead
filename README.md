@@ -8,7 +8,7 @@
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776ab.svg)](https://python.org/)
 [![Local](https://img.shields.io/badge/files-stay%20local-2563eb.svg)](#privacy-and-boundaries)
 
-![NexcoreFileRead pipeline](docs/file-read-flow.svg)
+![NexcoreFileRead pipeline](docs/file-read-flow.png)
 
 NexcoreFileRead 是 [NexcoreWork](https://github.com/yan-stone-computer/nexcorework-site)
 的本地文档读取层。它把 PDF、Office、图片、HTML 与数据文件变成 Agent 可消费的结构化 Markdown。
