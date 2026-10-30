@@ -8,7 +8,13 @@
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776ab.svg)](https://python.org/)
 [![Local](https://img.shields.io/badge/files-stay%20local-2563eb.svg)](#privacy-and-boundaries)
 
-![NexcoreFileRead pipeline](https://raw.githubusercontent.com/yan-stone-computer/NexcoreFileRead/main/docs/file-read-flow.png)
+![NexcoreFileRead pipeline](https://cdn.jsdelivr.net/gh/yan-stone-computer/NexcoreFileRead@main/docs/file-read-flow.png)
+
+### From the running product
+
+![NexcoreWork local document tools](https://cdn.jsdelivr.net/gh/yan-stone-computer/NexcoreFileRead@main/docs/product-tools.webp)
+
+真实产品把文档解析入口放在本机工具箱与对话上传中，不要求用户离开工作区另开网页转换。
 
 NexcoreFileRead 是 [NexcoreWork](https://github.com/yan-stone-computer/nexcorework-site)
 的本地文档读取层。它把 PDF、Office、图片、HTML 与数据文件变成 Agent 可消费的结构化 Markdown。
