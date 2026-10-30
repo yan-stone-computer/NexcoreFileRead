@@ -1,14 +1,36 @@
 # NexcoreFileRead
 
-> NexcoreWork 的本地文档读取层：把 PDF、Office、图片、HTML 与数据文件转换成结构化
-> Markdown，保留公式、图片和链接；扫描件在本机 OCR。文件不上传云端。
+### 把 PDF 丢给 Agent 时，丢掉的往往不只是版式。  
+### 公式、图片、链接和扫描件正文，也可能一起消失。
 
-这个仓库由原来的 TianShu2Markdown 演进而来。它保留原项目历史和 MIT 许可，重点不再是
-一个独立转换网页，而是成为 NexcoreWork 智能体可调用的文件读取基础设施。
+[![test](https://github.com/yan-stone-computer/NexcoreFileRead/actions/workflows/test.yml/badge.svg)](https://github.com/yan-stone-computer/NexcoreFileRead/actions/workflows/test.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-0ea5a6.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-3776ab.svg)](https://python.org/)
+[![Local](https://img.shields.io/badge/files-stay%20local-2563eb.svg)](#privacy-and-boundaries)
+
+![NexcoreFileRead pipeline](docs/file-read-flow.svg)
+
+NexcoreFileRead 是 [NexcoreWork](https://github.com/yan-stone-computer/nexcorework-site)
+的本地文档读取层。它把 PDF、Office、图片、HTML 与数据文件变成 Agent 可消费的结构化 Markdown。
+
+这个仓库由原 **TianShu2Markdown** 演进而来，保留原项目历史和 MIT 许可，同时把定位从
+“一个文档转换网页”调整为“智能体可调用的文件读取基础设施”。
+
+## 为什么再做一个文件读取器
+
+因为“读到了字”不等于“读懂了文档”：
+
+- PDF 公式被拆成表格碎片；
+- Word / PPT 里的图片静默消失；
+- PDF 链接只剩文字；
+- 扫描件没有文本层，最后返回空内容；
+- 原始文件被拿去云端转换；
+- 转换结果没有标明用了 PDF、Office 还是 OCR 引擎。
+
+NexcoreFileRead 的响应会明确告诉调用方：本次使用了哪个引擎、是否走过 OCR、是否发生降级，
+以及有哪些警告。
 
 ## 组合方案
-
-NexcoreWork 采用两条路径，并按可用性组合：
 
 ```text
 Word / Excel / PowerPoint / HTML / CSV / JSON
@@ -16,21 +38,18 @@ Word / Excel / PowerPoint / HTML / CSV / JSON
 
 PDF / 扫描件 / 公式 / 内嵌图片 / 复杂 Office
   └─ NexcoreFileRead 本地服务
-       ├─ PyMuPDF：文本、版面、图片、链接
+       ├─ PyMuPDF：文本、链接、图片
        ├─ RapidOCR：扫描 PDF 与图片离线识别
        ├─ MarkItDown：Office / HTML / 数据格式分派
        └─ Office ZIP：内嵌图片提取
 
-智能体只接收有长度上限的 Markdown 文本，原文件留在本机。
+输出：有长度上限的结构化 Markdown
 ```
 
-前端零依赖路径保证基础功能在服务未启动时仍可用；NexcoreFileRead 提供更高保真度的
-PDF、公式、图片和 OCR 路径。服务不可达时，NexcoreWork 会明确回退并继续处理，不会让
-一份无法解析的扫描件静默变成空文本。
+基础格式不依赖 Python 服务；高保真路径按需启动。服务不可用时，NexcoreWork 自动回退到浏览器
+内置解析，不会让上传流程整体失败。
 
-## 快速启动
-
-要求 Python 3.10+。
+## 30 秒启动
 
 ```bash
 git clone https://github.com/yan-stone-computer/NexcoreFileRead.git
@@ -41,16 +60,6 @@ python launcher.py
 
 默认只监听 `127.0.0.1:8765`。
 
-## HTTP API
-
-### 健康检查
-
-```http
-GET /api/health
-```
-
-### 转换文件
-
 ```http
 POST /api/convert
 Content-Type: multipart/form-data
@@ -58,34 +67,32 @@ Content-Type: multipart/form-data
 file=<document>
 ```
 
-响应：
-
 ```json
 {
-  "filename": "report.pdf",
-  "markdown": "## 第 1 页\n\n...",
+  "filename": "paper.pdf",
+  "markdown": "## 第 1 页\n\nln(Sit) = α0 + β1 ln(Pit)...",
   "ocr": false,
-  "engine": "pymupdf"
+  "engine": "pymupdf",
+  "warnings": []
 }
 ```
 
-字段说明：
+## 可直接验证的结果
 
-- `markdown`：交给下游智能体的结构化文本；
-- `ocr`：是否走过扫描件或图片 OCR；
-- `engine`：本次使用的解析路径；
-- `warnings`：可选，说明降级、跳过或无法保真的内容。
+仓库包含可运行样例：
 
-## NexcoreWork 集成
-
-NexcoreWork 的本地服务把前端 multipart 文件转发到：
-
-```text
-NEXCORE_FILE_READ_URL=http://127.0.0.1:8765
+```bash
+python -m unittest discover -s tests -v
 ```
 
-只接受回环地址。返回的 Markdown 会像普通上传文档一样进入本机文件表，随后由上下文预算
-决定注入量；原始文件不会进入模型上下文。
+回归测试覆盖：
+
+- 公式 PDF 能产出分页 Markdown；
+- Office 内嵌图片原样提取，不经重编码；
+- 本地服务健康检查返回明确版本。
+
+主项目组合调用已实测：NexcoreWork 通过 multipart 将 Word 文件转发给本服务，并拿回
+`markitdown+office-images` 产出的结构化 Markdown。
 
 ## 支持的格式
 
@@ -97,28 +104,32 @@ NEXCORE_FILE_READ_URL=http://127.0.0.1:8765
 | HTML | 是 | 视输入 | 是 | 不适用 |
 | CSV / JSON / TXT | 是 | 不适用 | 保留原文 | 不适用 |
 
-## 设计边界
+## 安全与边界
 
-- 本服务不是数据库，不保存长期状态；每次请求独立处理。
-- 文档内容视为不可信数据，不执行其中的脚本、宏或嵌入对象。
-- 公式保留依赖 PDF 文本层；纯图片公式只能走 OCR，可能损失上下标精度。
-- Office 内嵌图片会按体积和长边压缩后以 data URI 内嵌。
-- 加密 PDF、受密码保护的 Office 文件不会绕过保护。
-- OCR 可能出错，响应会明确标记，不把识别结果说成原文。
+- 只接受回环地址客户端；
+- 单文件上限 100 MB；
+- 不执行文档中的宏、脚本或嵌入对象；
+- 不处理加密文档；
+- 不保存请求长期状态；
+- OCR 结果会标记为 OCR，不冒充原文；
+- 纯图片公式只能识别，不能保证上下标完全正确。
 
-## 与 NexcoreWork 中其他模块的关系
+如果你有转换后公式、图片或链接丢失的文档，欢迎脱敏后提交到 Issue 和样例集。
 
-- 上下文治理：[nexcore-context-governor](https://github.com/yan-stone-computer/nexcore-context-governor)
-- 视觉证据：[NexcoreVision](https://github.com/yan-stone-computer/NexcoreVision)
-- 完整本地工作台：[NexcoreWork 产品站](https://github.com/yan-stone-computer/nexcorework-site)
+## 与 Nexcore 开放栈的关系
 
-## 来源、许可与上游
+- [nexcore-context-governor](https://github.com/yan-stone-computer/nexcore-context-governor)
+- [NexcoreMemory](https://github.com/yan-stone-computer/NexcoreMemory)
+- [NexcoreVision](https://github.com/yan-stone-computer/NexcoreVision)
+- [NexcoreToolGuard](https://github.com/yan-stone-computer/NexcoreToolGuard)
+- [NexcoreAgent](https://github.com/yan-stone-computer/NexcoreAgent)
 
-- 仓库自身：MIT，见 [LICENSE](LICENSE)。
-- 上游基础：Microsoft MarkItDown（MIT），只复用其转换 API 与少量通用工具。
-- PDF 增强：PyMuPDF。
-- 离线 OCR：RapidOCR + ONNX Runtime。
-- Office 图片提取与 NexcoreWork 集成代码由团队实现。
+## 来源与许可
 
-原 TianShu2Markdown README 中关于 MarkItDown 二次开发的归属说明继续适用。仓库更名为
-NexcoreFileRead 不改变第三方资源原有许可与版权。
+- 本仓库：MIT，见 [LICENSE](LICENSE)。
+- 上游基础：Microsoft MarkItDown，MIT。
+- PDF：PyMuPDF。
+- OCR：RapidOCR + ONNX Runtime。
+- Office 图片提取和 NexcoreWork 集成由 Nexcore 团队实现。
+
+原 TianShu2Markdown 的 MarkItDown 二次开发归属说明继续适用。
