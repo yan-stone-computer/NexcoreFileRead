@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" role="img" aria-labelledby="title desc">
+  <title id="title">NexcoreFileRead pipeline</title>
+  <desc id="desc">Files enter either a browser-native parser or a local high-fidelity service, then become structured Markdown evidence for an agent.</desc>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10Z" fill="#0b8797"/></marker></defs>
+  <rect width="960" height="540" rx="28" fill="#f7fbfc"/>
+  <g font-family="Microsoft YaHei, PingFang SC, sans-serif">
+    <text x="45" y="58" font-size="28" font-weight="700" fill="#18323b">NexcoreFileRead</text>
+    <text x="45" y="86" font-size="15" fill="#58737d">本地读取，分派到最合适的解析路径，只把有界证据交给模型。</text>
+
+    <rect x="42" y="150" width="150" height="220" rx="20" fill="#fff" stroke="#bcdce4"/>
+    <text x="117" y="195" text-anchor="middle" font-size="19" font-weight="700" fill="#18323b">Files</text>
+    <text x="117" y="230" text-anchor="middle" font-size="14" fill="#58737d">PDF · Word · PPT</text>
+    <text x="117" y="258" text-anchor="middle" font-size="14" fill="#58737d">Excel · HTML · Image</text>
+    <text x="117" y="286" text-anchor="middle" font-size="14" fill="#58737d">CSV · JSON · Text</text>
+    <text x="117" y="334" text-anchor="middle" font-size="13" fill="#0d7387">原文件不上传云端</text>
+
+    <rect x="235" y="122" width="190" height="130" rx="20" fill="#e8faf5" stroke="#54d0b1" stroke-width="2"/>
+    <text x="330" y="160" text-anchor="middle" font-size="13" font-weight="700" fill="#0b7d6c">FAST PATH</text>
+    <text x="330" y="192" text-anchor="middle" font-size="18" font-weight="700" fill="#18323b">Browser parser</text>
+    <text x="330" y="221" text-anchor="middle" font-size="13" fill="#58737d">ZIP + XML + DOM</text>
+
+    <rect x="235" y="278" width="190" height="130" rx="20" fill="#e8faf5" stroke="#54d0b1" stroke-width="2"/>
+    <text x="330" y="316" text-anchor="middle" font-size="13" font-weight="700" fill="#0b7d6c">HIGH FIDELITY</text>
+    <text x="330" y="348" text-anchor="middle" font-size="18" font-weight="700" fill="#18323b">Local service</text>
+    <text x="330" y="377" text-anchor="middle" font-size="13" fill="#58737d">PyMuPDF · RapidOCR</text>
+
+    <rect x="475" y="172" width="205" height="185" rx="22" fill="#10272f"/>
+    <text x="578" y="214" text-anchor="middle" font-size="13" font-weight="700" fill="#6fe5be" letter-spacing="1">STRUCTURED OUTPUT</text>
+    <text x="578" y="248" text-anchor="middle" font-size="20" font-weight="700" fill="#f4fbfc">Markdown evidence</text>
+    <text x="578" y="282" text-anchor="middle" font-size="14" fill="#bad3d9">formulas · links · images</text>
+    <text x="578" y="309" text-anchor="middle" font-size="14" fill="#bad3d9">engine · OCR · warnings</text>
+
+    <rect x="735" y="200" width="180" height="130" rx="20" fill="#fff" stroke="#bcdce4"/>
+    <text x="825" y="242" text-anchor="middle" font-size="19" font-weight="700" fill="#18323b">Agent</text>
+    <text x="825" y="276" text-anchor="middle" font-size="14" fill="#58737d">分块读取</text>
+    <text x="825" y="302" text-anchor="middle" font-size="14" fill="#58737d">预算注入</text>
+
+    <g fill="none" stroke="#0b8797" stroke-width="2.3" marker-end="url(#arrow)">
+      <path d="M192 210h29"/>
+      <path d="M192 322h29"/>
+      <path d="M425 188h35"/>
+      <path d="M425 344h35"/>
+      <path d="M680 260h40"/>
+    </g>
+    <text x="480" y="423" text-anchor="middle" font-size="15" fill="#466873">One interface, two parsing paths, explicit fallback.</text>
+    <text x="480" y="452" text-anchor="middle" font-size="14" fill="#58737d">The agent never receives a 4 MB base64 PDF just to read one formula.</text>
+  </g>
+</svg>
